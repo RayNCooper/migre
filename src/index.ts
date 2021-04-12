@@ -1,29 +1,38 @@
-import {Command, flags} from '@oclif/command'
+import Command, { flags } from "@oclif/command";
 
 class Migre extends Command {
-  static description = 'describe the command here'
+  static description = `
+migre is a CLI tool for generically migrating appwrite structures.
+At its heart, it tries to automate the process of wiping and migrating appwrite documents and files.
+Thanks to the usage of optionally provided .env and .env.remote files, it works for both local and remote appwrite instances. 
+  `;
+
+  static args = [
+    {
+      name: "operation",
+      required: true,
+      description: `[wipe] wipes all of the given structure type
+[migrate] migrates document structure to structure given in structure.json`,
+    },
+    {
+      name: "structure_type",
+      required: false,
+      description: "e.g. 'documents', 'files'",
+    },
+  ];
 
   static flags = {
-    // add --version flag to show CLI version
-    version: flags.version({char: 'v'}),
-    help: flags.help({char: 'h'}),
-    // flag with a value (-n, --name=VALUE)
-    name: flags.string({char: 'n', description: 'name to print'}),
-    // flag with no value (-f, --force)
-    force: flags.boolean({char: 'f'}),
-  }
-
-  static args = [{name: 'file'}]
+    remote: flags.boolean({
+      description:
+        "if flag is set, migre will look for an .env.remote file. Fallback is .env",
+      char: "r",
+      default: false,
+    }),
+  };
 
   async run() {
-    const {args, flags} = this.parse(Migre)
-
-    const name = flags.name ?? 'world'
-    this.log(`hello ${name} from ./src/index.ts`)
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`)
-    }
+    const { args, flags } = this.parse(Migre);
   }
 }
 
-export = Migre
+export = Migre;

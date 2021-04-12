@@ -1,20 +1,25 @@
-migre
+migre [maɪˌgre]
 =====
 
-An oclif-based CLI tool to generically migrate structure of appwrite instances
+An [oclif](https://oclif.io)-based CLI tool to generically migrate structure of [appwrite](https://appwrite.io/) instances. 
 
-[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/migre.svg)](https://npmjs.org/package/migre)
+At its heart, it tries to automate the process of wiping and migrating appwrite documents and files.
+  
+Thanks to the usage of optionally provided .env and .env.remote files, it works for both local and remote appwrite instances.
+
+## WIP
+Please bear in mind that this is a Work-in-Progress. As the package will be developed, the README will be updated accordingly and an NPM-version will be provided.
+<!-- [![Version](https://img.shields.io/npm/v/migre.svg)](https://npmjs.org/package/migre)
 [![Downloads/week](https://img.shields.io/npm/dw/migre.svg)](https://npmjs.org/package/migre)
-[![License](https://img.shields.io/npm/l/migre.svg)](https://github.com/RayNCooper/migre/blob/master/package.json)
+[![License](https://img.shields.io/npm/l/migre.svg)](https://github.com/RayNCooper/migre/blob/master/package.json) -->
 
 <!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
+<!-- * [Usage](#usage)
+* [Commands](#commands) -->
 <!-- tocstop -->
-# Usage
+<!-- # Usage -->
 <!-- usage -->
-```sh-session
+<!-- ```sh-session
 $ npm install -g migre
 $ migre COMMAND
 running command...
@@ -24,9 +29,9 @@ $ migre --help [COMMAND]
 USAGE
   $ migre COMMAND
 ...
-```
+``` -->
 <!-- usagestop -->
-# Commands
+<!-- # Commands -->
 <!-- commands -->
 
 <!-- commandsstop -->
