@@ -1,4 +1,6 @@
 import Command, { flags } from "@oclif/command";
+const appwrite = require("node-appwrite");
+const dotenv = require("dotenv");
 
 class Migre extends Command {
   static description = `
@@ -11,13 +13,10 @@ Thanks to the usage of optionally provided .env and .env.remote files, it works 
     {
       name: "operation",
       required: true,
-      description: `[wipe] wipes all of the given structure type
-[migrate] migrates document structure to structure given in structure.json`,
-    },
-    {
-      name: "structure_type",
-      required: false,
-      description: "e.g. 'documents', 'files'",
+      options: ["wipe", "migrate"],
+      description: `
+[wipe] wipes all documents of the given structure type
+[migrate] migrates appwrite collection structure to structure given in structure.json`,
     },
   ];
 
@@ -28,10 +27,52 @@ Thanks to the usage of optionally provided .env and .env.remote files, it works 
       char: "r",
       default: false,
     }),
+    type: flags.string({
+      description: "structure type to manipulate",
+      options: ["documents", "files"],
+      char: "t",
+    }),
   };
 
   async run() {
     const { args, flags } = this.parse(Migre);
+    const client = new appwrite.Client();
+
+    /* use different environment variables depending on remote flag */
+    if (flags.remote) dotenv.config({ path: ".env.remote" });
+    else if (!flags.remote) dotenv.config();
+
+    if (args.operation == "wipe") {
+      if (flags.type == "documents") {
+        // TODO
+        this.error(
+          "This version of migre does not allow wiping of documents yet"
+        );
+      } else if (flags.type == "files") {
+        const storage = new appwrite.Storage(client);
+
+        client
+          .setEndpoint(process.env.APPWRITE_DOMAIN)
+          .setProject(process.env.APPWRITE_PROJECT_ID)
+          .setKey(process.env.APPWRITE_API_KEY);
+
+        const filesPromise = await storage.listFiles();
+
+        filesPromise.files.forEach(async (file: any) => {
+          await storage.deleteFile(file.$id);
+        });
+      }
+    } else if (args.operation == "migrate") {
+      /* files cannot be migrated, only wiped in appwrite */
+      if (flags.type == "files") this.error("You cannot migrate files!");
+
+      if (flags.type == "documents") {
+        // TODO
+        this.error(
+          "This version of migre does not migrating of documents yet."
+        );
+      }
+    }
   }
 }
 
