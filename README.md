@@ -1,37 +1,42 @@
-migre [maɪˌgre]
-=====
-
-An [oclif](https://oclif.io)-based CLI tool to generically migrate structure of [appwrite](https://appwrite.io/) instances. 
+# migre [maɪˌgre] ✈️
+An [oclif](https://oclif.io)-based CLI tool to generically migrate structure of [appwrite](https://appwrite.io/) instances.
 
 At its heart, it tries to automate the process of wiping and migrating appwrite documents and files.
-  
-Thanks to the usage of provided .env.appwrite and .env.appwrite.remote files, it works for both local and remote appwrite instances.
 
-## WIP
-Please bear in mind that this is a Work-in-Progress. As the package will be developed, the README will be updated accordingly and an NPM-version will be provided.
-<!-- [![Version](https://img.shields.io/npm/v/migre.svg)](https://npmjs.org/package/migre)
-[![Downloads/week](https://img.shields.io/npm/dw/migre.svg)](https://npmjs.org/package/migre)
-[![License](https://img.shields.io/npm/l/migre.svg)](https://github.com/RayNCooper/migre/blob/master/package.json) -->
+Thanks to the usage of provided environmental variable and structure template files, it works for both local and remote appwrite instances.
 
 <!-- toc -->
-<!-- * [Usage](#usage)
-* [Commands](#commands) -->
+* [Preface](#preface)
+* [Installation](#installation)
+* [Usage](#usage)
 <!-- tocstop -->
-<!-- # Usage -->
-<!-- usage -->
-<!-- ```sh-session
-$ npm install -g migre
-$ migre COMMAND
-running command...
-$ migre (-v|--version|version)
-migre/0.0.0 linux-x64 node-v14.16.1
-$ migre --help [COMMAND]
-USAGE
-  $ migre COMMAND
-...
-``` -->
-<!-- usagestop -->
-<!-- # Commands -->
-<!-- commands -->
 
-<!-- commandsstop -->
+## Preface
+
+I built this tool because my use case requires much wiping of documents and files, as well as migration of collections. Apart from that, I wanted to separate it as an external dependency so it can be integrated into the corresponding [package.json scripts](https://docs.npmjs.com/cli/v6/using-npm/scripts) and does not bloat my current project's directory.
+
+For general purpose usage, it is recommended to use the official [appwrite CLI](https://appwrite.io/docs/server/database?sdk=cli).
+
+## Installation
+<!-- installation -->
+```
+§ npm install -g https://github.com/RayNCooper/migre 
+```
+
+## Usage
+<!-- usage -->
+```sh-session
+USAGE
+  $ migre OPERATION
+
+ARGUMENTS
+  OPERATION  (wipe|migrate) 
+             [wipe] wipes all documents of the given structure type
+             [migrate] migrates appwrite collection structure to structure given in structure.json
+
+OPTIONS
+  -h, --help                  show CLI help
+  -r, --remote                uses vars from provided .env.appwrite.remote file
+  -t, --type=documents|files  structure type to manipulate
+  -v, --version               show CLI version
+```
