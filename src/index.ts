@@ -1,4 +1,5 @@
 import Command, { flags } from "@oclif/command";
+const fs = require("fs");
 const appwrite = require("node-appwrite");
 const dotenv = require("dotenv");
 
@@ -84,10 +85,42 @@ Thanks to the usage of provided .env.appwrite and .env.appwrite.remote files, it
       if (flags.type == "files") this.error("You cannot migrate files!");
 
       if (flags.type == "documents") {
-        // TODO
-        this.error(
-          "This version of migre does not migrating of documents yet."
-        );
+        const database = new appwrite.Database(client);
+
+        client
+          .setEndpoint(process.env.APPWRITE_DOMAIN)
+          .setProject(process.env.APPWRITE_PROJECT_ID)
+          .setKey(process.env.APPWRITE_API_KEY);
+
+        const collectionsPromise = await database.listCollections();
+
+        // delete each collection, including their documents
+        collectionsPromise.collections.forEach(async (collection: any) => {
+          await database.deleteCollection(collection.$id);
+        });
+
+        fs.readFile("./structure.json", "utf8", (err: any, data: any) => {
+          if (err) return this.error(err);
+          const parsed = JSON.parse(data);
+
+          // parsed structure needs to be an array
+          if (!parsed.length)
+            this.error("Your structure.json needs to be an array!");
+
+          // FIXME: typing for collection
+          parsed.forEach(async (collection: any) => {
+            try {
+              await database.createCollection(
+                collection.name,
+                collection.read,
+                collection.write,
+                collection.rules
+              );
+            } catch (e) {
+              console.log(e);
+            }
+          });
+        });
       }
     }
   }

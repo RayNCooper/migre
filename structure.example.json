@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Recipes",
+    "read": ["*"],
+    "write": ["*"],
+    "rules": [
+      {
+        "label": "Name",
+        "key": "name",
+        "type": "text",
+        "required": true,
+        "array": false
+      },
+      {
+        "label": "Ingredients",
+        "key": "ingredients",
+        "type": "wildcard",
+        "required": true,
+        "array": false
+      }
+    ]
+  }
+]
