@@ -6,7 +6,7 @@ class Migre extends Command {
   static description = `
 migre is a CLI tool for generically migrating appwrite structures.
 At its heart, it tries to automate the process of wiping and migrating appwrite documents and files.
-Thanks to the usage of optionally provided .env and .env.remote files, it works for both local and remote appwrite instances. 
+Thanks to the usage of provided .env.appwrite and .env.appwrite.remote files, it works for both local and remote appwrite instances. 
   `;
 
   static args = [
@@ -23,7 +23,7 @@ Thanks to the usage of optionally provided .env and .env.remote files, it works 
   static flags = {
     remote: flags.boolean({
       description:
-        "if flag is set, migre will look for an .env.remote file. Fallback is .env",
+        "if flag is set, migre will look for an .env.appwrite.remote, .env.appwrite if flag is not set",
       char: "r",
       default: false,
     }),
@@ -32,22 +32,30 @@ Thanks to the usage of optionally provided .env and .env.remote files, it works 
       options: ["documents", "files"],
       char: "t",
     }),
+    version: flags.version({ char: "v" }),
+    help: flags.help({ char: "h" }),
   };
 
   async run() {
     const { args, flags } = this.parse(Migre);
     const client = new appwrite.Client();
 
-    /* use different environment variables depending on remote flag */
+    // use different environment variables depending on remote flag
     if (flags.remote) {
       const d = dotenv.config({ path: ".env.appwrite.remote" });
-      if (d.error) this.error(`There was a problem with accessing ENV variables, did you create .env.appwrite.remote? See github.com/RayNCooper/migre`);
+      if (d.error)
+        this.error(
+          `There was a problem with accessing ENV variables, did you create and configure .env.appwrite.remote?`
+        );
     } else if (!flags.remote) {
       const d = dotenv.config({ path: ".env.appwrite" });
-      if (d.error) this.error('There was a problem with accessing ENV variables, did you create .env.appwrite?');
+      if (d.error)
+        this.error(
+          "There was a problem with accessing ENV variables, did you create and configure .env.appwrite?"
+        );
     }
 
-    /* execute operations for the wipe argument */
+    // execute operations for the wipe argument
     if (args.operation == "wipe") {
       if (flags.type == "documents") {
         // TODO
@@ -69,10 +77,10 @@ Thanks to the usage of optionally provided .env and .env.remote files, it works 
         });
       }
       this.error("You need to set a flag so migre knows what to wipe.");
-    } 
-    /* execute operations for the migrate argument */
+    }
+    // execute operations for the migrate argument
     else if (args.operation == "migrate") {
-      /* files cannot be migrated, only wiped in appwrite */
+      // files cannot be migrated, only wiped in appwrite
       if (flags.type == "files") this.error("You cannot migrate files!");
 
       if (flags.type == "documents") {
