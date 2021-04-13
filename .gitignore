@@ -7,3 +7,5 @@
 /tmp
 node_modules
 .env
+.env.appwrite
+.env.appwrite.remote

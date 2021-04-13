@@ -39,9 +39,15 @@ Thanks to the usage of optionally provided .env and .env.remote files, it works 
     const client = new appwrite.Client();
 
     /* use different environment variables depending on remote flag */
-    if (flags.remote) dotenv.config({ path: ".env.remote" });
-    else if (!flags.remote) dotenv.config();
+    if (flags.remote) {
+      const d = dotenv.config({ path: ".env.appwrite.remote" });
+      if (d.error) this.error(`There was a problem with accessing ENV variables, did you create .env.appwrite.remote? See github.com/RayNCooper/migre`);
+    } else if (!flags.remote) {
+      const d = dotenv.config({ path: ".env.appwrite" });
+      if (d.error) this.error('There was a problem with accessing ENV variables, did you create .env.appwrite?');
+    }
 
+    /* execute operations for the wipe argument */
     if (args.operation == "wipe") {
       if (flags.type == "documents") {
         // TODO
@@ -62,7 +68,10 @@ Thanks to the usage of optionally provided .env and .env.remote files, it works 
           await storage.deleteFile(file.$id);
         });
       }
-    } else if (args.operation == "migrate") {
+      this.error("You need to set a flag so migre knows what to wipe.");
+    } 
+    /* execute operations for the migrate argument */
+    else if (args.operation == "migrate") {
       /* files cannot be migrated, only wiped in appwrite */
       if (flags.type == "files") this.error("You cannot migrate files!");
 
