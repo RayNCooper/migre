@@ -43,13 +43,13 @@ Thanks to the usage of provided .env.appwrite and .env.appwrite.remote files, it
 
     // use different environment variables depending on remote flag
     if (flags.remote) {
-      const d = dotenv.config({ path: ".env.appwrite.remote" });
+      const d = dotenv.config({ path: "./.env.appwrite.remote" });
       if (d.error)
         this.error(
           `There was a problem with accessing ENV variables, did you create and configure .env.appwrite.remote?`
         );
     } else if (!flags.remote) {
-      const d = dotenv.config({ path: ".env.appwrite" });
+      const d = dotenv.config({ path: "./.env.appwrite" });
       if (d.error)
         this.error(
           "There was a problem with accessing ENV variables, did you create and configure .env.appwrite?"
@@ -61,7 +61,7 @@ Thanks to the usage of provided .env.appwrite and .env.appwrite.remote files, it
       if (flags.type == "documents") {
         // TODO
         this.error(
-          "This version of migre does not allow wiping of documents yet"
+          "This version of migre does not allow wiping of documents yet."
         );
       } else if (flags.type == "files") {
         const storage = new appwrite.Storage(client);
@@ -76,8 +76,7 @@ Thanks to the usage of provided .env.appwrite and .env.appwrite.remote files, it
         filesPromise.files.forEach(async (file: any) => {
           await storage.deleteFile(file.$id);
         });
-      }
-      this.error("You need to set a flag so migre knows what to wipe.");
+      } else this.error("You need to set a flag so migre knows what to wipe.");
     }
     // execute operations for the migrate argument
     else if (args.operation == "migrate") {
@@ -92,12 +91,16 @@ Thanks to the usage of provided .env.appwrite and .env.appwrite.remote files, it
           .setProject(process.env.APPWRITE_PROJECT_ID)
           .setKey(process.env.APPWRITE_API_KEY);
 
-        const collectionsPromise = await database.listCollections();
-
-        // delete each collection, including their documents
-        collectionsPromise.collections.forEach(async (collection: any) => {
-          await database.deleteCollection(collection.$id);
-        });
+        let collectionsPromise;
+        try {
+          collectionsPromise = await database.listCollections();
+          // delete each collection, including their documents
+          collectionsPromise.collections.forEach(async (collection: any) => {
+            await database.deleteCollection(collection.$id).catch();
+          });
+        } catch (err) {
+          this.warn("No old Collections found.");
+        }
 
         fs.readFile("./structure.json", "utf8", (err: any, data: any) => {
           if (err) return this.error(err);
@@ -117,11 +120,14 @@ Thanks to the usage of provided .env.appwrite and .env.appwrite.remote files, it
                 collection.rules
               );
             } catch (e) {
-              console.log(e);
+              this.error("Error while creating new Collections: " + e);
             }
           });
         });
-      }
+      } else
+        this.error(
+          "You need to set a type (files/documents) via flag so migre knows what to migrate."
+        );
     }
   }
 }
