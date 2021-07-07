@@ -113,11 +113,16 @@ Thanks to the usage of provided .env.appwrite and .env.appwrite.remote files, it
           // FIXME: typing for collection
           parsed.forEach(async (collection: any) => {
             try {
-              await database.createCollection(
+              const r = await database.createCollection(
                 collection.name,
                 collection.read,
                 collection.write,
                 collection.rules
+              );
+              console.log(
+                `VUE_APP_APPWRITE_${r.name.toUpperCase()}_COLLECTION_KEY=${
+                  r.$id
+                }`
               );
             } catch (e) {
               this.error("Error while creating new Collections: " + e);
